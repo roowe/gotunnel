@@ -6,7 +6,6 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/hmac"
-	"crypto/md5"
 	"crypto/rand" // Use crypto/rand for secure randomness
 	"crypto/sha256"
 	"encoding/binary"
@@ -16,7 +15,7 @@ import (
 
 const (
 	TaaTokenSize     = aes.BlockSize // Size of the AES block (16 bytes)
-	TaaSignatureSize = md5.Size      // Size of the MD5 hash (16 bytes)
+	TaaSignatureSize = sha256.Size      // Size of the sha256 hash (16 bytes)
 	TaaBlockSize     = TaaTokenSize + TaaSignatureSize // Total size of the auth block (32 bytes)
 )
 
@@ -76,7 +75,7 @@ func NewTaa(key string) *Taa {
 	}
 
 	// Initialize HMAC-MD5 using the remaining 16 bytes of the derived key.
-	mac := hmac.New(md5.New, token[TaaTokenSize:])
+	mac := hmac.New(sha256.New, token[TaaTokenSize:])
 
 	return &Taa{
 		block: block,
